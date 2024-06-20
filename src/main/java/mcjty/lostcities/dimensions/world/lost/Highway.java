@@ -2,9 +2,12 @@ package mcjty.lostcities.dimensions.world.lost;
 
 import mcjty.lostcities.config.LostCityProfile;
 import mcjty.lostcities.dimensions.world.LostCityChunkGenerator;
+import mcjty.lostcities.dimensions.world.lost.cityassets.AssetRegistries;
+import mcjty.lostcities.dimensions.world.lost.cityassets.PredefinedHighway;
 import mcjty.lostcities.varia.ChunkCoord;
 import net.minecraft.world.gen.NoiseGeneratorPerlin;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -14,8 +17,8 @@ public class Highway {
 
     private static NoiseGeneratorPerlin perlinX = null;
     private static NoiseGeneratorPerlin perlinZ = null;
-    private static Map<ChunkCoord, Integer> xHighwayLevelCache = new HashMap<>();
-    private static Map<ChunkCoord, Integer> zHighwayLevelCache = new HashMap<>();
+    private static Map<ChunkCoord, Integer> xHighwayLevelCache = null;
+    private static Map<ChunkCoord, Integer> zHighwayLevelCache = null;
 
 
     private static void makePerlin(long seed) {
@@ -32,8 +35,36 @@ public class Highway {
     public static void cleanCache() {
         perlinX = null;
         perlinZ = null;
-        xHighwayLevelCache.clear();
-        zHighwayLevelCache.clear();
+        xHighwayLevelCache = null;
+        zHighwayLevelCache = null;
+    }
+
+    private static void initCache() {
+        xHighwayLevelCache = new HashMap<>();
+        zHighwayLevelCache = new HashMap<>();
+        for (PredefinedHighway hw : AssetRegistries.PREDEFINED_HIGHWAYS.getIterable()) {
+            PredefinedHighway.Direction dir = hw.getDirection();
+            Map<ChunkCoord, Integer> cache = dir.orientation == Orientation.X ? xHighwayLevelCache : zHighwayLevelCache;
+            for (int cx = hw.getChunkX(), cz = hw.getChunkZ(), i = hw.getLength(); i > 0; i--) {
+                cache.put(new ChunkCoord(hw.getDimension(), cx, cz), hw.getLevel());
+                cx += dir.offsetX;
+                cz += dir.offsetZ;
+            }
+        }
+    }
+
+    public static Map<ChunkCoord, Integer> getXHighwayLevelCache() {
+        if (xHighwayLevelCache == null) {
+            initCache();
+        }
+        return xHighwayLevelCache;
+    }
+
+    public static Map<ChunkCoord, Integer> getZHighwayLevelCache() {
+        if (zHighwayLevelCache == null) {
+            initCache();
+        }
+        return zHighwayLevelCache;
     }
 
     /**
@@ -41,7 +72,7 @@ public class Highway {
      * Returns 0 or 1 if there is a highway (at that city level) going through this chunk.
      */
     public static int getXHighwayLevel(int chunkX, int chunkZ, LostCityChunkGenerator provider, LostCityProfile profile) {
-        return getHighwayLevel(provider, profile, Highway.xHighwayLevelCache, cp -> hasXHighway(cp, profile), Orientation.X, new ChunkCoord(provider.dimensionId, chunkX, chunkZ));
+        return getHighwayLevel(provider, profile, getXHighwayLevelCache(), cp -> hasXHighway(cp, profile), Orientation.X, new ChunkCoord(provider.dimensionId, chunkX, chunkZ));
     }
 
     /**
@@ -49,7 +80,7 @@ public class Highway {
      * Returns 0 or 1 if there is a highway (at that city level) going through this chunk.
      */
     public static int getZHighwayLevel(int chunkX, int chunkZ, LostCityChunkGenerator provider, LostCityProfile profile) {
-        return getHighwayLevel(provider, profile, Highway.zHighwayLevelCache, cp -> hasZHighway(cp, profile), Orientation.Z, new ChunkCoord(provider.dimensionId, chunkX, chunkZ));
+        return getHighwayLevel(provider, profile, getZHighwayLevelCache(), cp -> hasZHighway(cp, profile), Orientation.Z, new ChunkCoord(provider.dimensionId, chunkX, chunkZ));
     }
 
     private static int getHighwayLevel(LostCityChunkGenerator provider, LostCityProfile profile, Map<ChunkCoord, Integer> cache, Function<ChunkCoord, Boolean> hasHighway, Orientation orientation, ChunkCoord cp) {
