@@ -22,6 +22,7 @@ public class AssetRegistries {
     public static final AbstractAssetRegistry<Palette> PALETTES = new AbstractAssetRegistry<>();
     public static final AbstractAssetRegistry<PredefinedCity> PREDEFINED_CITIES = new AbstractAssetRegistry<>();
     public static final AbstractAssetRegistry<PredefinedSphere> PREDEFINED_SPHERES = new AbstractAssetRegistry<>();
+    public static final AbstractAssetRegistry<PredefinedHighway> PREDEFINED_HIGHWAYS = new AbstractAssetRegistry<>();
 
     public static final void reset() {
         CONDITIONS.reset();
@@ -34,6 +35,7 @@ public class AssetRegistries {
         PALETTES.reset();
         PREDEFINED_CITIES.reset();
         PREDEFINED_SPHERES.reset();
+        PREDEFINED_HIGHWAYS.reset();
     }
 
     public static void load(File file) {
@@ -151,6 +153,8 @@ public class AssetRegistries {
                     PREDEFINED_CITIES.register(new PredefinedCity(object));
                 } else if ("sphere".equals(type)) {
                     PREDEFINED_SPHERES.register(new PredefinedSphere(object));
+                } else if ("highway".equals(type)) {
+                    PREDEFINED_HIGHWAYS.register(new PredefinedHighway(object));
                 } else {
                     throw new RuntimeException("Unknown type '" + type + " in " + filename + "'!");
                 }
