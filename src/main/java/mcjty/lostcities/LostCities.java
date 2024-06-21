@@ -23,15 +23,15 @@ import java.util.function.Function;
         acceptedMinecraftVersions = "[1.12,1.13)",
         acceptableRemoteVersions = "*")
 public class LostCities {
-    public static final String MODID = "lostcities";
-    public static final String VERSION = "2.0.22";
+    public static final String MODID = "lostcitieslts";
+    public static final String VERSION = "1.0.0";
     public static final String MIN_FORGE11_VER = "13.19.0.2176";
 
     @SidedProxy(clientSide="mcjty.lostcities.setup.ClientProxy", serverSide="mcjty.lostcities.setup.ServerProxy")
     public static IProxy proxy;
     public static ModSetup setup = new ModSetup();
 
-    @Mod.Instance("lostcities")
+    @Mod.Instance("lostcitieslts")
     public static LostCities instance;
 
     public static LostCitiesImp lostCitiesImp = new LostCitiesImp();
