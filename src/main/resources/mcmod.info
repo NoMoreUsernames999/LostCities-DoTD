@@ -1,7 +1,7 @@
 [
 {
   "modid": "lostcities",
-  "name": "The Lost Cities",
+  "name": "Lost Cities LTS",
   "description": "The Lost Cities World Generator",
   "version": "${version}",
   "mcversion": "${mcversion}",

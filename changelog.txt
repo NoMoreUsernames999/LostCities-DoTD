@@ -1,3 +1,6 @@
+3.0.0:
+- Added static highways and refactored mod ID.
+
 2.0.22:
 - Joseph fixed #242: a problem with assuming at y=0 that it's air all the way down
 
